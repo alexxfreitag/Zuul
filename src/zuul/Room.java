@@ -16,11 +16,11 @@ package zuul;
  */
 public class Room 
 {
-    public String description;
-    public Room northExit;
-    public Room southExit;
-    public Room eastExit;
-    public Room westExit;
+    private String description;
+    private Room northExit;
+    private Room southExit;
+    private Room eastExit;
+    private Room westExit;
 
     /**
      * Create a room described "description". Initially, it has
@@ -60,5 +60,48 @@ public class Room
     {
         return description;
     }
-
+    
+    /**
+     * Retorna uma das saídas da sala, a partir de uma String.
+     * @param direction
+     * @return A sala
+     */
+    public Room getExit(String direction){
+         if(direction.equals("norte")) {
+            return northExit;
+        }
+        if(direction.equals("leste")) {
+            return eastExit;
+        }
+        if(direction.equals("sul")) {
+           return southExit;
+        }
+        if(direction.equals("oeste")) {
+            return westExit;
+        }
+        return null;
+    }
+    
+    /**
+     * Retorna uma descrição das saídas da sala,
+     * por exemplo: "Saídas: norte oeste".
+     * @return Uma descrição das saídas disponíveis
+     */
+    public String getExitString(){
+        String exitString = "Saídas :";
+        if(northExit != null){
+            exitString += "norte ";
+        }
+        if(eastExit != null) {
+           exitString += "leste ";
+        }
+        if(southExit != null) {
+            exitString += "sul ";
+        }
+        if(westExit != null) {
+            exitString += "oeste ";
+        }
+        
+        return exitString;
+    } 
 }
