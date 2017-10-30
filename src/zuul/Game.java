@@ -9,6 +9,7 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
+    private Item item;
         
     /**
      * Cria o jogo e inicializa o mapa interno.
@@ -24,21 +25,37 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theatre, pub, lab, office;
+        Room outside, theatre, pub, lab, office, attic;
+        Item table, chair, tv;
       
+        //create the itans
+        table = new Item ("uma mesa", 50);
+        chair = new Item ("uma cadeira", 20);
+        tv = new Item ("uma tv", 15);
         // create the rooms
         outside = new Room("fora da entrada principal da universidade");
         theatre = new Room("em um auditório");
-        pub = new Room("na cantina do campus");
-        lab = new Room("em um laboratório de informática");
+        pub = new Room("na cantina do campus" , table);
+        lab = new Room("em um laboratório de informática", chair);
         office = new Room("na sala dos professores");
+        attic = new Room("no sótão do laboratório");
         
         // initialise room exits
-        outside.setExits(null, theatre, lab, pub);
-        theatre.setExits(null, null, null, outside);
-        pub.setExits(null, outside, null, null);
-        lab.setExits(outside, office, null, null);
-        office.setExits(null, null, null, lab);
+        outside.setExit("leste", theatre);
+        outside.setExit("sul", lab);
+        outside.setExit("oeste", pub);
+        
+        theatre.setExit("oeste", outside);
+        
+        pub.setExit("leste", outside);
+        
+        lab.setExit("norte", outside);
+        lab.setExit("leste", office);
+        lab.setExit("cima", attic);
+        
+        attic.setExit("baixo", lab);
+        
+        office.setExit("oeste", lab);
 
         currentRoom = outside;  // Começa o jogo fora 
     }
@@ -71,13 +88,18 @@ public class Game
         System.out.println("Mundo de Zuul é um jogo de aventura, incrivelmente chato.");
         System.out.println("Digite 'ajuda' se você precisar de ajuda.");
         System.out.println();
+        
         printLocationInfo();
+        
     }
     
-    private void printLocationInfo(){
-        System.out.println("Você está " + currentRoom.getDescription());
-        System.out.println(currentRoom.getExitString());
-     }
+    /**
+     * Imprime informação do local atual.
+     */
+    private void printLocationInfo()
+    {
+        System.out.println(currentRoom.getLongDescription());
+    }
 
     /**
      * Dado um comando, processa (ou seja: executa) o comando.
@@ -117,7 +139,7 @@ public class Game
         System.out.println("pela universidade.");
         System.out.println();
         System.out.println("Seus comandos são:");
-        System.out.println("   ir_para sair ajuda");
+        System.out.println("   " + parser.getCommandList());
     }
 
     /** 
@@ -136,7 +158,6 @@ public class Game
 
         // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
-        
 
         if (nextRoom == null) {
             System.out.println("Não há uma porta!");
@@ -144,7 +165,7 @@ public class Game
         else {
             currentRoom = nextRoom;
             printLocationInfo();
-            }
+        }
     }
 
     /** 
@@ -161,5 +182,9 @@ public class Game
         else {
             return true;  // significa que queremos sair
         }
+    }
+    
+    private void look() {
+        System.out.println(currentRoom.getLongDescription());
     }
 }
